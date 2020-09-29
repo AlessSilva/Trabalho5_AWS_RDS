@@ -2,20 +2,9 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn flat dense round icon="menu" @click="leftDrawerOpen = !leftDrawerOpen" />
+        <q-toolbar-title>Video Subtitles</q-toolbar-title>
+        <q-btn flat dense round icon="logout" />
       </q-toolbar>
     </q-header>
 
@@ -23,84 +12,69 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
+      :width="250"
       content-class="bg-grey-1"
     >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
 
+      <q-list>
+        <template v-for="(menuItem, index) in menuLinks">
+          <q-item :key="index" clickable :active="index == activeIndex" @click="setActive(index)">
+            <q-item-section avatar>
+              <q-icon :name="menuItem.icon" />
+            </q-item-section>
+            <q-item-section>{{ menuItem.label }}</q-item-section>
+          </q-item>
+          <q-separator :key="'sep' + index" v-if="menuItem.separator" />
+        </template>
+      </q-list>
+
+    </q-drawer>
     <q-page-container>
-      <router-view />
+      <WorkList v-if="activeIndex == 0"/>
+      <SignUp v-else-if="activeIndex == 1"/>
+      <SignIn v-else-if="activeIndex == 2"/>
+      <WorkForm v-else-if="activeIndex == 3"/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksData = [
+const menuList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    icon: 'home',
+    label: 'Início'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    icon: 'account_box',
+    label: 'Perfil',
+    separator: true
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    icon: 'info',
+    label: 'Sobre'
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    icon: 'info',
+    label: 'Sobre'
   }
-];
+]
 
+import WorkList from '../components/WorkList'
+import WorkForm from '../components/WorkForm'
+import SignUp from '../components/SignUp'
+import SignIn from '../components/SignIn'
 export default {
-  name: 'MainLayout',
-  components: { EssentialLink },
+  components: { WorkList, SignUp, SignIn, WorkForm },
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: linksData
+      menuLinks: menuList,
+      activeIndex: 0
+    }
+  },
+  methods: {
+    setActive (idx) {
+      this.activeIndex = idx
     }
   }
 }

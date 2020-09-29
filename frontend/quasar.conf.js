@@ -19,13 +19,12 @@ module.exports = function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/boot-files
     boot: [
-      
-      'axios',
+      'axios'
     ],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: [
-      'app.sass'
+      'app.scss'
     ],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
@@ -39,7 +38,7 @@ module.exports = function (/* ctx */) {
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
       'roboto-font', // optional, you are not bound to it
-      'material-icons', // optional, you are not bound to it
+      'material-icons' // optional, you are not bound to it
     ],
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
@@ -64,19 +63,22 @@ module.exports = function (/* ctx */) {
 
       // https://quasar.dev/quasar-cli/handling-webpack
       extendWebpack (cfg) {
-cfg.module.rules.push({
+        cfg.module.rules.push({
           enforce: 'pre',
           test: /\.(js|vue)$/,
           loader: 'eslint-loader',
           exclude: /node_modules/
         })
-      },
+      }
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
       port: 8080,
+      watchOptions: {
+        poll: 1000 // Check for changes every second
+      },
       open: true // opens browser window automatically
     },
 
@@ -84,7 +86,6 @@ cfg.module.rules.push({
     framework: {
       iconSet: 'material-icons', // Quasar icon set
       lang: 'en-us', // Quasar language pack
-      config: {},
 
       // Possible values for "importStrategy":
       // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
@@ -99,7 +100,17 @@ cfg.module.rules.push({
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: ['Notify'],
+      config: {
+        notify: {
+          html: true,
+          position: 'top',
+          color: 'white',
+          timeout: 1000,
+          classes: 'q-py-none',
+          group: false
+        }
+      }
     },
 
     // animations: 'all', // --- includes all animations
@@ -116,9 +127,9 @@ cfg.module.rules.push({
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: `Frontend`,
-        short_name: `Frontend`,
-        description: `frontend`,
+        name: 'videoSubtitles',
+        short_name: 'videoSubtitles',
+        description: 'cloud-computing-videos-subtitle',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -183,7 +194,7 @@ cfg.module.rules.push({
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'frontend'
+        appId: 'videoSubtitles'
       },
 
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
