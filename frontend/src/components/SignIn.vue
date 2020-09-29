@@ -1,82 +1,119 @@
 <template>
-    <q-page>
-        <q-card class="container">
-            <img class="avatar" src="user-img.png">
-            <q-card-section>
-            <q-form
-            class="q-gutter-md q-pa-sm"
-            >
-                <q-input
-                v-model="user.email"
-                label="Seu email"
-                lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Campo em branco']"
-                />
+  <div class="container">
+    <q-card>
+      <img class="avatar" src="user-img.png" />
+      <q-card-section>
+        <q-form class="q-gutter-md q-pa-sm" @submit="login">
+          <q-input
+            v-model="user.email"
+            label="Seu email"
+            lazy-rules
+            :rules="[(val) => (val && val.length > 0) || 'Campo em branco']"
+          />
 
-                <q-input
-                type="password"
-                v-model="user.senha"
-                label="Senha"
-                lazy-rules
-                :rules="[ val => val && val.length > 0 || 'Campo em branco']"
-                />
+          <q-input
+            type="password"
+            v-model="user.password"
+            label="Senha"
+            lazy-rules
+            :rules="[(val) => (val && val.length > 0) || 'Campo em branco']"
+          />
 
-                <div>
-                    <q-btn label="Entrar" type="submit" color="primary"/>
-                </div>
-            </q-form>
-            </q-card-section>
-        </q-card>
-    </q-page>
+          <div>
+            <q-btn :loading="loading" label="Entrar" type="submit" color="primary" />
+          </div>
+
+          <div class="row justify-center">
+            <span
+              >Não é cadastrado?<span
+                class="signUp"
+                @click="$router.push('signUp')"
+              >
+                Cadastre-se</span
+              >
+            </span>
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script>
+import authService from '../service/authService'
 export default {
-
   data () {
     return {
-      user: {}
+      user: {
+        password: '',
+        email: ''
+      },
+      loading: false
+    }
+  },
+  methods: {
+    async login () {
+      const { email, password } = this.user
+      try {
+        this.loading = true
+        await authService.signIn({ email, password })
+        this.$router.push('home')
+      } catch (err) {
+        this.$q.notify({
+          message: 'Email ou senha incorretos',
+          color: 'red'
+        })
+      } finally {
+        this.loading = false
+      }
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-    .q-page{
-        display flex
-        justify-content center
-    }
-    .q-card{
-        margin-top 100px
-        width 350px
-        height 400px
-        display flex
-        flex-direction column
-    }
+.container {
+  display: flex;
+  justify-content: center;
+}
 
-    .q-icon{
-        margin 5px
-        margin-left auto
-        padding 10px
-        border-radius 5px
-        font-size 15px
-        cursor pointer
-        transition all .2
-    }
+.q-card {
+  margin-top: 100px;
+  width: 350px;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+}
 
-    .q-icon:hover{
-        background-color #aaa
-    }
+.q-icon {
+  margin: 5px;
+  margin-left: auto;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2;
+}
 
-    .avatar{
-        margin 10px auto
-        width 100px
-        height 100px
-        border-radius 50%
-    }
+.q-icon:hover {
+  background-color: #aaa;
+}
 
-    .q-btn{
-        height 40px
-        width 100%
-    }
+.avatar {
+  margin: 10px auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.signUp {
+  cursor: pointer;
+  color: $primary;
+  align-self: flex-end;
+}
+
+.q-btn {
+  height: 40px;
+  width: 100%;
+}
 </style>

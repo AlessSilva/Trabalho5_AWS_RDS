@@ -1,22 +1,23 @@
 <template>
-   <q-page>
+   <div class="container">
        <q-table
         hide-bottom
         class="q-mx-lg"
-        title="Meus uploads"
+        :title="`Meus trabalhos - ${username}`"
         :data="data"
         :columns="columns"
         row-key="name"
         no-results-label="Nenhum resultado encontrado"
         no-data-label="Você ainda não enviou nenhum arquivo"
       />
-   </q-page>
+   </div>
 </template>
 
 <script>
 const ALLOWED_FILE_TIPES = ['video/mp4']
 
 export default {
+  props: ['username'],
   data () {
     return {
       columns: [
@@ -29,40 +30,21 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
-        { name: 'size', align: 'center', label: 'Tamanho', field: 'size', sortable: true, format: val => val && `${val} MB` },
-        { name: 'duration', label: 'Duração', field: 'duration', sortable: true, format: val => val && `${val} min` },
-        { name: 'words', label: 'Palavras', field: 'words', sortable: true },
-        { name: 'date', label: 'Data', field: 'date', sortable: true },
-        { name: 'status', label: 'Status', field: 'status', sortable: true },
-        { name: 'download', label: 'Download', field: 'download' }
+        { name: 'description', align: 'center', label: 'Descrição', field: 'description' },
+        { name: 'deadline', label: 'Prazo', field: 'deadline', sortable: true }
       ],
 
       data: [
         {
           name: 'Video A',
-          size: 20,
-          duration: 10,
-          words: 240,
-          date: '27/09/2020',
-          status: 'Em andamento'
+          description: 20,
+          deadline: '27/09/2020'
         },
         {
           name: 'Video B',
-          size: 10,
-          duration: 5,
-          words: 57,
-          date: '16/04/2020',
-          status: 'Finalizado'
-        },
-        {
-          name: 'Video C',
-          size: 22,
-          duration: 18,
-          words: 432,
-          date: '01/08/2020',
-          status: 'Finalizado'
+          description: 10,
+          deadline: '16/04/2020'
         }
-
       ]
     }
   },
@@ -81,10 +63,5 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-    .uploader-container{
-        padding 80px 0
-        display flex
-        align-items center
-        justify-content center
-    }
+
 </style>
