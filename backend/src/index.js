@@ -9,10 +9,10 @@ require("./database");
 
 const app = express();
 
-app.use( express.json() );
+app.use(express.json());
 
-app.use( cors() );
+app.use(cors());
 
-app.use( router );
+app.use(router);
 
-app.listen( 3333 );
+app.listen(3333, () => console.log("server iniciado em http://localhost:3333"));

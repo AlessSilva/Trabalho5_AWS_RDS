@@ -2,90 +2,79 @@ const User = require("../models/User");
 const Work = require("../models/Work");
 
 module.exports = {
-    async index( request, response ){
+  async index(request, response) {
+    try {
+      const { user_id } = request.params;
+      const user = await User.findByPk(user_id, {
+        include: { association: "work" },
+      });
 
-        try {
+      if (!user) {
+        return response
+          .status(400)
+          .send({ message: "Trabalhos não encontrados" });
+      }
 
-            const { user_id } = request.params;
-            const user = await User.findByPk( user_id, { include: { association: "work" } } );
+      return response.status(200).send(user.work);
+    } catch (error) {}
+  },
 
-            if( !user ){
-                return response.status(400).send( { message: "Trabalhos não encontrados" } );
-            }
+  async store(request, response) {
+    try {
+      const { user_id } = request.params;
+      const { title, description, deadline } = request.body;
+      const user = await User.findByPk(user_id);
 
-            return response.status(200).send( user.work );
-            
-        } catch (error) {
-            
-        }
+      if (!user) {
+        return response.status(400).send({ message: "Usuário não encontrado" });
+      }
 
-    },
+      const work = await Work.create({ title, description, deadline, user_id });
+      return response
+        .status(200)
+        .send({ message: "Trabalho cadastrado com sucesso", work });
+    } catch (error) {}
+  },
 
-    async store( request, response ) {
+  async update(request, response) {
+    try {
+      const { id } = request.params;
 
-        try {
-         
-            const { user_id } = request.params;
-            const { title, description, deadline } = request.body;
-            const user = await User.findByPk(user_id);
+      const { title, description, deadline } = request.body;
 
-            if( !user ){
-                return response.status(400).send( {message: "Usuário não encontrado"} );
-            }
+      const work = await Work.findByPk(id);
 
-            const work = await Work.create( { title, description, deadline, user_id} );
-            return response.status(200).send( { message: "Trabalho cadastrado com sucesso", work } );
+      if (!work) {
+        return response
+          .status(400)
+          .send({ message: "Trabalho não encontrado" });
+      }
 
-        } catch (error) {
-            
-        }
+      await Work.update({ title, description, deadline }, { where: { id } });
 
-    },
+      return response
+        .status(200)
+        .send({ message: "Trabalho atualizado com sucesso" });
+    } catch (error) {}
+  },
 
-    async update( request, response ) {
+  async delete(request, response) {
+    try {
+      const { id } = request.params;
 
-        try {
+      const work = await Work.findByPk(id);
 
-            const {id} = request.params;
+      if (!work) {
+        return response
+          .status(400)
+          .send({ message: "Trabalho não encontrado" });
+      }
 
-            const { title, description, deadline } = request.body;
+      await Work.destroy({ where: { id } });
 
-            const work = await Work.findByPk( id );
-
-            if( !work ){
-                return response.status(400).send( { message: "Trabalho não encontrado" } );
-            }
-
-            await Work.update( { title, description, deadline }, { where: { id } } );
-
-            return response.status( 200 ).send( { message: "Trabalho atualizado com sucesso" } );
-            
-        } catch (error) {
-            
-        }
-
-
-    },
-
-    async delete( request, response ){
-
-        try {
-         
-            const {id} = request.params;
-
-            const work = await Work.findByPk( id );
-
-            if( !work ){
-                return response.status(400).send( { message: "Trabalho não encontrado" } );
-            }
-
-            await Work.destroy( { where: { id } } );
-
-            return response.status(200).send( { message: "Trabalho deletado com sucesso" } );
-
-        } catch (error) {
-            
-        }
-
-    }
-}
+      return response
+        .status(200)
+        .send({ message: "Trabalho deletado com sucesso" });
+    } catch (error) {}
+  },
+};
