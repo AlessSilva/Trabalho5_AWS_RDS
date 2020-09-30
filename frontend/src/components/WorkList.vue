@@ -77,7 +77,7 @@ export default {
       }
     },
     dateFormat (date) {
-      const d = new Date('2020-09-29T03:00:00.000Z').toISOString().split('T')[0]
+      const d = new Date(date).toISOString().split('T')[0]
       return d.split('-').reverse().join('/')
     }
   }
