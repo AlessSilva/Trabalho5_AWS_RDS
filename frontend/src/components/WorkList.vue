@@ -34,6 +34,7 @@
         row-key="id"
         no-results-label="Nenhum resultado encontrado"
         no-data-label="Você ainda não cadastrou nenhum trabalho"
+        rows-per-page-label="Trabalhos por página"
         :selected-rows-label="(n)=> `${n} ${n===1 ? 'trabalho selecionado' : 'trabalhos selecionados' } `"
         selection="multiple"
         :selected.sync="selected"
