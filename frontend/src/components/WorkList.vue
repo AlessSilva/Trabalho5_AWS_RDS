@@ -1,90 +1,90 @@
 <template>
-   <q-page>
-       <q-table
-        hide-bottom
-        class="q-mx-lg"
-        title="Meus uploads"
-        :data="data"
+   <div>
+      <q-btn
+      :loading="loading"
+       title="Selecione um ou mais trabalhos"
+       class="q-mx-lg q-mb-lg"
+       label="deletar" :disable="selected.length===0" :color="selected.length!==0 ? 'red' : 'black'"
+       @click="deleteWork"/>
+
+       <q-btn
+      :loading="loading"
+       title="Selecione somente um trabalho"
+       class="q-mx-lg q-mb-lg"
+       label="Editar" :disable="selected.length!==1" :color="selected.length===1 ? 'blue' : 'black'"
+       @click="editDialog=true"/>
+
+      <q-dialog v-model="editDialog">
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Edite o trabalho</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <WorkForm :workEdit="selected[0]" :onUpdate="onUpdate"/>
+      </q-card>
+      </q-dialog>
+
+      <q-table
+        class="q-mx-lg q-mb-xl"
+        :title="`Meus trabalhos - ${username}`"
+        :data="list"
         :columns="columns"
-        row-key="name"
+        row-key="id"
         no-results-label="Nenhum resultado encontrado"
-        no-data-label="Você ainda não enviou nenhum arquivo"
+        no-data-label="Você ainda não cadastrou nenhum trabalho"
+        rows-per-page-label="Trabalhos por página"
+        :selected-rows-label="(n)=> `${n} ${n===1 ? 'trabalho selecionado' : 'trabalhos selecionados' } `"
+        selection="multiple"
+        :selected.sync="selected"
       />
-   </q-page>
+   </div>
 </template>
 
 <script>
-const ALLOWED_FILE_TIPES = ['video/mp4']
-
+import WorkForm from '../components/WorkForm'
 export default {
+  props: ['username', 'list', 'onDelete', 'onUpdate'],
+  components: { WorkForm },
   data () {
     return {
+      selected: [],
+      loading: false,
+      editDialog: false,
       columns: [
-        {
-          name: 'name',
-          required: true,
-          label: 'Nome',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
-        },
-        { name: 'size', align: 'center', label: 'Tamanho', field: 'size', sortable: true, format: val => val && `${val} MB` },
-        { name: 'duration', label: 'Duração', field: 'duration', sortable: true, format: val => val && `${val} min` },
-        { name: 'words', label: 'Palavras', field: 'words', sortable: true },
-        { name: 'date', label: 'Data', field: 'date', sortable: true },
-        { name: 'status', label: 'Status', field: 'status', sortable: true },
-        { name: 'download', label: 'Download', field: 'download' }
-      ],
-
-      data: [
-        {
-          name: 'Video A',
-          size: 20,
-          duration: 10,
-          words: 240,
-          date: '27/09/2020',
-          status: 'Em andamento'
-        },
-        {
-          name: 'Video B',
-          size: 10,
-          duration: 5,
-          words: 57,
-          date: '16/04/2020',
-          status: 'Finalizado'
-        },
-        {
-          name: 'Video C',
-          size: 22,
-          duration: 18,
-          words: 432,
-          date: '01/08/2020',
-          status: 'Finalizado'
-        }
-
+        { name: 'id', align: 'left', label: 'Id', field: 'id', sortable: true },
+        { name: 'title', label: 'Nome', align: 'left', field: 'title', sortable: true },
+        { name: 'description', align: 'center', label: 'Descrição', field: 'description' },
+        { name: 'deadline', label: 'Prazo', field: 'deadline', format: val => this.dateFormat(val), sortable: true }
       ]
     }
   },
   methods: {
-    checkFileType (files) {
-      return files.filter(file => ALLOWED_FILE_TIPES.includes(file.type))
+    deleteWork () {
+      try {
+        this.loading = true
+        this.selected.map((work) => (
+          this.onDelete(work)
+        ))
+      } catch (err) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Erro ao deletar'
+        })
+      } finally {
+        this.loading = false
+        this.selected = []
+      }
     },
-    onRejected (rejectedEntries) {
-      this.$q.notify({
-        type: 'negative',
-        message: 'Tipo de arquivo inválido'
-      })
+    dateFormat (date) {
+      const d = new Date(date).toISOString().split('T')[0]
+      return d.split('-').reverse().join('/')
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-    .uploader-container{
-        padding 80px 0
-        display flex
-        align-items center
-        justify-content center
-    }
+
 </style>
