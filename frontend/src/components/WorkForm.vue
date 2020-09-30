@@ -38,7 +38,7 @@
             </q-input>
 
             <div>
-                <q-btn label="Adicionar" type="submit" color="primary"/>
+                <q-btn :loading="loading" label="Adicionar" @click="saveWork" color="primary"/>
             </div>
         </q-form>
         </q-card-section>
@@ -47,10 +47,26 @@
 
 <script>
 export default {
-
+  props: ['onSave'],
   data () {
     return {
-      work: {}
+      work: {},
+      loading: false
+    }
+  },
+  methods: {
+    async saveWork () {
+      try {
+        this.loading = true
+        await this.onSave(this.work)
+      } catch (err) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Erro ao recuperar lista de trabalhos'
+        })
+      } finally {
+        this.loading = false
+      }
     }
   }
 }

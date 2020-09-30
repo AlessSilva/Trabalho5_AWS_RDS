@@ -5,7 +5,6 @@ const getAccessToken = async () => {
   const session = await authService.getSession()
   if (session) {
     const { token } = session
-    console.log(token)
     return token
   }
   return ''
@@ -16,8 +15,8 @@ const api = axios.create({
 })
 
 api.interceptors.request.use(async (request) => {
-  request.headers.authorization = await getAccessToken()
-  console.log(request.headers.authorization)
+  const token = await getAccessToken()
+  request.headers.authorization = `Bearer ${token}`
   return request
 })
 

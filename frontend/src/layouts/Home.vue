@@ -1,8 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
       <q-icon title="Sair" class="logout-icon" name="logout"/>
-      <WorkForm />
-      <WorkList :username="authenticatedUser.name"/>
+      <WorkForm :onSave="onSaveWork"/>
+      <WorkList :list="works" :username="authenticatedUser.name"/>
   </q-layout>
 </template>
 
@@ -16,13 +16,29 @@ export default {
   components: { WorkList, WorkForm },
   data () {
     return {
-      authenticatedUser: {}
+      authenticatedUser: {},
+      works: {}
     }
   },
-  methods: {},
+  methods: {
+    async onSaveWork (work) {
+      this.authenticatedUser = await authService.getCurrentUser()
+      work.userId = this.authenticatedUser.id
+      const workResponse = await workService.save(work)
+
+      this.works.push(workResponse)
+    }
+  },
   async created () {
     this.authenticatedUser = await authService.getCurrentUser()
-    console.log('aqiu', await workService.get(this.authenticatedUser.id))
+    try {
+      this.works = await workService.get(this.authenticatedUser.id)
+    } catch (err) {
+      this.$q.notify({
+        type: 'negative',
+        message: 'Erro ao recuperar lista de trabalhos'
+      })
+    }
   }
 }
 </script>
