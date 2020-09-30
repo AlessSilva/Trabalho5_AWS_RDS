@@ -3,7 +3,7 @@
     <q-card>
       <img class="avatar" src="user-img.png" />
       <q-card-section>
-        <q-form class="q-gutter-md q-pa-sm">
+        <q-form @submit="cadastrar" class="q-gutter-md q-pa-sm">
           <q-input
             v-model="user.name"
             label="Seu nome"
@@ -38,7 +38,7 @@
           />
 
           <div>
-            <q-btn :loading="loading" label="Cadastrar" @click="cadastrar" color="primary" />
+            <q-btn :loading="loading" label="Cadastrar" type="submit" color="primary" />
           </div>
         </q-form>
       </q-card-section>

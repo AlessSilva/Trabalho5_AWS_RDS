@@ -55,7 +55,7 @@ export default {
         { name: 'id', align: 'left', label: 'Id', field: 'id', sortable: true },
         { name: 'title', label: 'Nome', align: 'left', field: 'title', sortable: true },
         { name: 'description', align: 'center', label: 'Descrição', field: 'description' },
-        { name: 'deadline', label: 'Prazo', field: 'deadline', sortable: true }
+        { name: 'deadline', label: 'Prazo', field: 'deadline', format: val => this.dateFormat(val), sortable: true }
       ]
     }
   },
@@ -75,6 +75,10 @@ export default {
         this.loading = false
         this.selected = []
       }
+    },
+    dateFormat (date) {
+      const d = new Date('2020-09-29T03:00:00.000Z').toISOString().split('T')[0]
+      return d.split('-').reverse().join('/')
     }
   }
 }

@@ -75,6 +75,7 @@ export default {
         })
       } finally {
         this.loading = false
+        this.$router.go(this.$router.currentRoute)
       }
     }
   },
