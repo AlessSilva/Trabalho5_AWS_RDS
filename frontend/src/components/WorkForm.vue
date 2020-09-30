@@ -3,7 +3,7 @@
 
         <q-card-section>
         <q-form
-        @submit="saveWork"
+        @submit="onSubmit"
         class="q-gutter-md q-pa-sm"
         >
             <q-input
@@ -21,7 +21,7 @@
             />
 
             <q-input
-                    label="Prazo"
+                label="Prazo"
                 v-model="work.deadline"
                 mask="date"
                 :rules="['date']">
@@ -38,7 +38,11 @@
                 </template>
             </q-input>
 
-            <div>
+            <div v-if="workEdit">
+                <q-btn :loading="loading" label="Editar" type="submit"  color="primary"/>
+            </div>
+
+            <div v-else>
                 <q-btn :loading="loading" label="Adicionar" type="submit"  color="primary"/>
             </div>
         </q-form>
@@ -48,7 +52,7 @@
 
 <script>
 export default {
-  props: ['onSave'],
+  props: ['onSave', 'onUpdate', 'workEdit'],
   data () {
     return {
       work: {},
@@ -56,18 +60,27 @@ export default {
     }
   },
   methods: {
-    async saveWork () {
+    async onSubmit () {
       try {
         this.loading = true
-        await this.onSave(this.work)
+        if (this.onUpdate) {
+          await this.onUpdate(this.work)
+        } else {
+          await this.onSave(this.work)
+        }
       } catch (err) {
         this.$q.notify({
           type: 'negative',
-          message: 'Erro ao recuperar lista de trabalhos'
+          message: 'Erro ao salvar dados'
         })
       } finally {
         this.loading = false
       }
+    }
+  },
+  created () {
+    if (this.workEdit) {
+      this.work = this.workEdit
     }
   }
 }

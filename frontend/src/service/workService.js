@@ -15,8 +15,14 @@ const deleteWork = async (work) => {
   return data
 }
 
+const update = async (work) => {
+  const data = await api.put(`/users/${work.id}/work`, work)
+  return data
+}
+
 export default {
   get,
   save,
-  deleteWork
+  deleteWork,
+  update
 }

@@ -2,10 +2,29 @@
    <div>
       <q-btn
       :loading="loading"
-       title="Selecione um trabalho"
+       title="Selecione um ou mais trabalhos"
        class="q-mx-lg q-mb-lg"
-       label="deletar" :disable="selected.length===0" color="red"
+       label="deletar" :disable="selected.length===0" :color="selected.length!==0 ? 'red' : 'black'"
        @click="deleteWork"/>
+
+       <q-btn
+      :loading="loading"
+       title="Selecione somente um trabalho"
+       class="q-mx-lg q-mb-lg"
+       label="Editar" :disable="selected.length!==1" :color="selected.length===1 ? 'blue' : 'black'"
+       @click="editDialog=true"/>
+
+      <q-dialog v-model="editDialog">
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">Edite o trabalho</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+
+        <WorkForm :workEdit="selected[0]" :onUpdate="onUpdate"/>
+      </q-card>
+      </q-dialog>
 
       <q-table
         class="q-mx-lg q-mb-xl"
@@ -23,13 +42,15 @@
 </template>
 
 <script>
-
+import WorkForm from '../components/WorkForm'
 export default {
-  props: ['username', 'list', 'onDelete'],
+  props: ['username', 'list', 'onDelete', 'onUpdate'],
+  components: { WorkForm },
   data () {
     return {
       selected: [],
       loading: false,
+      editDialog: false,
       columns: [
         { name: 'id', align: 'left', label: 'Id', field: 'id', sortable: true },
         { name: 'title', label: 'Nome', align: 'left', field: 'title', sortable: true },
@@ -39,7 +60,6 @@ export default {
     }
   },
   methods: {
-
     deleteWork () {
       try {
         this.loading = true

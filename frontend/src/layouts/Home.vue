@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
       <q-icon title="Sair" class="logout-icon" name="logout"/>
       <WorkForm :onSave="onSaveWork"/>
-      <WorkList :list="works" :username="authenticatedUser.name" :onDelete="onDeleteWork"/>
+      <WorkList :list="works" :username="authenticatedUser.name" :onDelete="onDeleteWork" :onUpdate="onUpdateWork"/>
   </q-layout>
 </template>
 
@@ -29,11 +29,14 @@ export default {
       this.works.push(workResponse)
     },
     async onDeleteWork (work) {
-      this.authenticatedUser = await authService.getCurrentUser()
-      work.userId = this.authenticatedUser.id
       await workService.deleteWork(work)
-
       this.works = this.works.filter((w) => w.id !== work.id)
+    },
+    async onUpdateWork (work) {
+      await workService.update(work)
+
+      const idx = this.works.findIndex((w) => w.id === work.id)
+      this.works[idx] = work
     }
   },
   async created () {
