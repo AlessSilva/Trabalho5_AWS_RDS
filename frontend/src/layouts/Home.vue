@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-      <q-icon title="Sair" class="logout-icon" name="logout"/>
+      <q-icon title="Sair" class="logout-icon" name="logout" @click="signOut"/>
       <WorkForm :onSave="onSaveWork"/>
       <WorkList :list="works" :username="authenticatedUser.name" :onDelete="onDeleteWork" :onUpdate="onUpdateWork"/>
   </q-layout>
@@ -37,6 +37,10 @@ export default {
 
       const idx = this.works.findIndex((w) => w.id === work.id)
       this.works[idx] = work
+    },
+    async signOut () {
+      await authService.signOut()
+      this.$router.push('/')
     }
   },
   async created () {

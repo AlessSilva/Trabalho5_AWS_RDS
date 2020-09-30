@@ -16,6 +16,10 @@ const signIn = async (userInfo) => {
   localStorage.setItem('session', JSON.stringify({ user, token }))
 }
 
+const signOut = async () => {
+  localStorage.removeItem('session')
+}
+
 const signUp = async (userInfo) => {
   await api.post('/users', userInfo)
 }
@@ -24,5 +28,6 @@ export default {
   getSession,
   getCurrentUser,
   signIn,
+  signOut,
   signUp
 }
