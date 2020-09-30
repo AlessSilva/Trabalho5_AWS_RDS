@@ -3,6 +3,7 @@
 
         <q-card-section>
         <q-form
+        @submit="saveWork"
         class="q-gutter-md q-pa-sm"
         >
             <q-input
@@ -38,7 +39,7 @@
             </q-input>
 
             <div>
-                <q-btn :loading="loading" label="Adicionar" @click="saveWork" color="primary"/>
+                <q-btn :loading="loading" label="Adicionar" type="submit"  color="primary"/>
             </div>
         </q-form>
         </q-card-section>

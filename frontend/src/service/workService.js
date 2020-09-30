@@ -10,7 +10,13 @@ const save = async (work) => {
   return data
 }
 
+const deleteWork = async (work) => {
+  const data = await api.delete(`/users/${work.id}/work`)
+  return data
+}
+
 export default {
   get,
-  save
+  save,
+  deleteWork
 }
